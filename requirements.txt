@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+xero-python
+pyodbc
+python-dotenv
+pydantic-settings
+google-cloud-secret-manager
