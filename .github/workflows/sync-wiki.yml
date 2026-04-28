@@ -1,0 +1,33 @@
+name: Sync WIKI to GitHub Wiki
+
+on:
+  push:
+    paths:
+      - 'WIKI.md'
+    branches:
+      - main
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Sync WIKI.md to Wiki
+        run: |
+          # Configure Git
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          
+          # Clone the Wiki repository
+          # Using the GITHUB_TOKEN for authentication
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git /tmp/wiki
+          
+          # Copy WIKI.md to the Wiki's Home.md
+          cp WIKI.md /tmp/wiki/Home.md
+          
+          # Push the changes back to the Wiki
+          cd /tmp/wiki
+          git add Home.md
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Sync WIKI.md from main repository" && git push)
